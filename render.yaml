@@ -1,0 +1,52 @@
+# render.yaml - Deploy Advanced Telegram Music Bot on Render
+
+services:
+  - type: worker
+    name: telegram-advanced-music-bot
+    runtime: python
+    repo: https://github.com/YOUR_USERNAME/YOUR_REPO_NAME  # Replace with your repo URL
+    plan: starter  # or free for testing (but voice chat needs more resources)
+    
+    # Build and deployment settings
+    buildCommand: |
+      apt-get update && apt-get install -y ffmpeg python3-pip
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    
+    startCommand: python music_bot.py
+    
+    # Environment variables
+    envVars:
+      - key: BOT_TOKEN
+        sync: false  # Set this manually in Render dashboard
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: OWNER_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+    
+    # Auto-scaling (for starter plan)
+    numInstances: 1
+    
+    # Health check for worker
+    healthCheckPath: /health
+    
+    # Disk persistence for cache
+    disk:
+      name: music-cache
+      mountPath: /app/cache
+      sizeGB: 1
+    
+    # Environment
+    env:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: TZ
+        value: UTC
+      - key: RENDER_WORKER
+        value: "true"
