@@ -1,0 +1,33 @@
+services:
+  - type: worker
+    name: telegram-music-bot
+    runtime: image
+    repo: https://github.com/YOUR_USERNAME/YOUR_REPO_NAME
+    
+    # Build with Docker
+    buildCommand: docker build -t music-bot .
+    startCommand: docker run music-bot
+    
+    image:
+      url: music-bot:latest
+    
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: OWNER_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+    
+    disk:
+      name: cache
+      mountPath: /app/cache
+      sizeGB: 2
+    
+    healthCheckPath: /health
