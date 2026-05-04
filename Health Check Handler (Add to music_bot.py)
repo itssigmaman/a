@@ -1,0 +1,27 @@
+# Add at the beginning of music_bot.py
+from flask import Flask, jsonify
+import threading
+
+# Create health check server
+health_app = Flask(__name__)
+
+@health_app.route('/health')
+def health_check():
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "is_playing": voice_manager.is_playing if hasattr(voice_manager, 'is_playing') else False
+    })
+
+def run_health_server():
+    health_app.run(host='0.0.0.0', port=8000)
+
+# In your main() function, after initialization:
+def main():
+    # ... existing initialization code ...
+    
+    # Start health check server in background
+    health_thread = threading.Thread(target=run_health_server, daemon=True)
+    health_thread.start()
+    
+    # ... rest of your main function ...
